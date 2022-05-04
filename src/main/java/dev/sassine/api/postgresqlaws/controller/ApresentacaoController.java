@@ -19,12 +19,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 @RestController
 @RequestMapping(value = "/v1/apresentacao")
 public class ApresentacaoController {
-	
 	
 	@GetMapping
 	public Map<String, List<Object>> findAll() {
@@ -33,8 +30,8 @@ public class ApresentacaoController {
 	
 	@PostMapping
 	@ResponseStatus(CREATED)
-	public void create(@RequestBody Object dto) throws JsonProcessingException {
-
+	public void create(@RequestBody Object dto) {
+		// TODO repository
 	}
 	
 	@GetMapping("/{id}")
