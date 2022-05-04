@@ -7,8 +7,8 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,27 +19,31 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import dev.sassine.api.postgresqlaws.domain.PalestraEntity;
+import dev.sassine.api.postgresqlaws.dto.PalestraDTO;
+import dev.sassine.api.postgresqlaws.repository.PalestraEntityRepository;
 
 @RestController
 @RequestMapping(value = "/v1/apresentacao")
 public class ApresentacaoController {
 	
+	@Autowired
+	private PalestraEntityRepository repo;
 	
 	@GetMapping
-	public Map<String, List<Object>> findAll() {
-		return Map.of("content", null);
+	public Map<String, List<PalestraEntity>> findAll() {
+		return Map.of("content", repo.findAll());
 	}
 	
 	@PostMapping
 	@ResponseStatus(CREATED)
-	public void create(@RequestBody Object dto) throws JsonProcessingException {
-
+	public void create(@RequestBody PalestraDTO dto) {
+		repo.save(dto.toEntity());
 	}
 	
 	@GetMapping("/{id}")
-	public EntityModel<Map<String, Object>> find(@PathVariable  Long id) {
-		return EntityModel.of(Map.of("content", Optional.of(null)
+	public EntityModel<Map<String, PalestraEntity>> find(@PathVariable  Long id) {
+		return EntityModel.of(Map.of("content", repo.findById(id.intValue())
 				.orElseThrow(()-> new ResponseStatusException(NO_CONTENT,"no content found for this request"))))
 				.add(linkTo(methodOn(this.getClass()).findAll()).withRel("todas-apresentacoes"));
 	}
